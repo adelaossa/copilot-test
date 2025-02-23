@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:14.3
+    container_name: postgres
+    environment:
+      POSTGRES_USER: copuser
+      POSTGRES_PASSWORD: coppass
+      POSTGRES_DB: copdb
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./postgres:/var/lib/postgresql/data
+
