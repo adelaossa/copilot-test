@@ -65,6 +65,7 @@ export class InvoicesService {
 
   async update(id: number, updateInvoiceDto: UpdateInvoiceDto): Promise<Invoice> {
     const invoice = await this.findOne(id);
+    
     if (updateInvoiceDto.description) {
       invoice.description = updateInvoiceDto.description;
     }
