@@ -1,5 +1,6 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany, ManyToMany, BeforeInsert } from 'typeorm';
 import { InvoiceItem } from './invoice-item.entity';
+import { Payment } from '../../payments/entities/payment.entity';
 
 @Entity()
 export class Invoice {
@@ -9,7 +10,7 @@ export class Invoice {
   @Column()
   description: string;
 
-  @Column()
+  @Column('decimal', { precision: 10, scale: 2 })
   totalPayableAmount: number;
 
   @Column()
@@ -17,4 +18,19 @@ export class Invoice {
 
   @OneToMany(() => InvoiceItem, item => item.invoice, { cascade: true })
   items: InvoiceItem[];
+
+  @Column('decimal', { precision: 10, scale: 2 })
+  remainingAmount: number;
+
+  @ManyToMany(() => Payment, payment => payment.invoices)
+  payments: Payment[];
+
+  @BeforeInsert()
+  setInitialRemainingAmount() {
+    this.remainingAmount = this.totalPayableAmount;
+  }
+
+  hasPayments(): boolean {
+    return this.payments && this.payments.length > 0;
+  }
 }
