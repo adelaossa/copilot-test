@@ -20,10 +20,9 @@ export class ProductsController {
   }
 
   @Get(':id')
-  @ApiBearerAuth('access-token')
-  @Roles({ roles: ['user'] })
+  @Unprotected()
   findOne(@Param('id') id: number): Promise<Product> {
-    this.logger.debug(`Finding product with id ${id} - requires user role`);
+    this.logger.debug(`Finding product with id ${id} - public endpoint`);
     return this.productsService.findOne(id);
   }
 
