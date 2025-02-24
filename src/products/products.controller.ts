@@ -1,5 +1,5 @@
 import { Controller, Get, Post, Body, Put, Param, Delete, Logger } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { ProductsService } from './products.service';
 import { Product } from './entities/product.entity';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -20,6 +20,7 @@ export class ProductsController {
   }
 
   @Get(':id')
+  @ApiBearerAuth('access-token')
   @Roles({ roles: ['user'] })
   findOne(@Param('id') id: number): Promise<Product> {
     this.logger.debug(`Finding product with id ${id} - requires user role`);
@@ -27,6 +28,7 @@ export class ProductsController {
   }
 
   @Post()
+  @ApiBearerAuth('access-token')
   @Roles({ roles: ['admin'] })
   create(@Body() createProductDto: CreateProductDto): Promise<Product> {
     this.logger.debug('Creating product - requires admin role');
@@ -34,6 +36,7 @@ export class ProductsController {
   }
 
   @Put(':id')
+  @ApiBearerAuth('access-token')
   @Roles({ roles: ['admin'] })
   update(@Param('id') id: number, @Body() updateProductDto: Partial<CreateProductDto>): Promise<Product> {
     this.logger.debug(`Updating product ${id} - requires admin role`);
@@ -41,6 +44,7 @@ export class ProductsController {
   }
 
   @Delete(':id')
+  @ApiBearerAuth('access-token')
   @Roles({ roles: ['admin'] })
   remove(@Param('id') id: number): Promise<void> {
     this.logger.debug(`Deleting product ${id} - requires admin role`);
