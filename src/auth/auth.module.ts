@@ -18,7 +18,10 @@ const logger = new Logger('KeycloakAuth');
           tokenValidation: TokenValidation.NONE,
           useNestLogger: true,
           verifyTokenAudience: false,
-          bearerOnly: false
+          bearerOnly: false,
+          graphqlGuard: {
+            enabled: true
+          }
         };
       },
     }),
@@ -38,5 +41,6 @@ const logger = new Logger('KeycloakAuth');
       useClass: RoleGuard,
     },
   ],
+  exports: [KeycloakConnectModule],
 })
 export class AuthModule {}

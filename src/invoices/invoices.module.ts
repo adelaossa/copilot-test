@@ -7,14 +7,17 @@ import { InvoiceItem } from './entities/invoice-item.entity';
 import { ProductsModule } from '../products/products.module';
 import { PaymentsModule } from '../payments/payments.module';
 import { InvoicesSeeder } from './invoices.seeder';
+import { InvoicesResolver } from './invoices.resolver';
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Invoice, InvoiceItem]),
     ProductsModule,
-    PaymentsModule
+    PaymentsModule,
+    AuthModule
   ],
-  providers: [InvoicesService, InvoicesSeeder],
+  providers: [InvoicesService, InvoicesSeeder, InvoicesResolver],
   controllers: [InvoicesController],
   exports: [InvoicesService, InvoicesSeeder],
 })
