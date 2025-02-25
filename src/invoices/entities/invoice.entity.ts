@@ -1,7 +1,8 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany, ManyToMany, BeforeInsert } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany, ManyToMany, BeforeInsert, ManyToOne, JoinColumn } from 'typeorm';
 import { ObjectType, Field, ID, Float } from '@nestjs/graphql';
 import { InvoiceItem } from './invoice-item.entity';
 import { Payment } from '../../payments/entities/payment.entity';
+import { Client } from '../../clients/entities/client.entity';
 
 @ObjectType()
 @Entity()
@@ -33,6 +34,14 @@ export class Invoice {
   @Field(() => [Payment])
   @ManyToMany(() => Payment, payment => payment.invoices)
   payments: Payment[];
+
+  @Field(() => Client)
+  @ManyToOne(() => Client, { nullable: false })
+  @JoinColumn({ name: 'clientId' })
+  client: Client;
+
+  @Column({ name: 'clientId' })
+  clientId: number;
 
   @BeforeInsert()
   setInitialRemainingAmount() {

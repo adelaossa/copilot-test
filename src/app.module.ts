@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { InvoicesModule } from './invoices/invoices.module';
 import { PaymentsModule } from './payments/payments.module';
 import { ProductsModule } from './products/products.module';
+import { ClientsModule } from './clients/clients.module';
 import { AuthModule } from './auth/auth.module';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
@@ -39,6 +40,7 @@ import { join } from 'path';
     InvoicesModule,
     PaymentsModule,
     ProductsModule,
+    ClientsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

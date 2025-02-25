@@ -2,7 +2,29 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type Client {
+  address: String
+  createdAt: DateTime!
+  email: String!
+  id: ID!
+  isActive: Boolean!
+  name: String!
+  phone: String
+  taxId: String
+  updatedAt: DateTime!
+}
+
+input CreateClientInput {
+  address: String
+  email: String!
+  isActive: Boolean = true
+  name: String!
+  phone: String
+  taxId: String
+}
+
 input CreateInvoiceInput {
+  clientId: Int!
   description: String!
   dueDate: DateTime!
   items: [InvoiceItemInput!]!
@@ -29,6 +51,7 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 scalar DateTime
 
 type Invoice {
+  client: Client!
   description: String!
   dueDate: DateTime!
   id: ID!
@@ -71,11 +94,14 @@ enum ItemDistributionType {
 scalar JSON
 
 type Mutation {
+  createClient(input: CreateClientInput!): Client!
   createInvoice(input: CreateInvoiceInput!): Invoice!
   createPayment(input: CreatePaymentInput!): Payment!
   createProduct(input: CreateProductInput!): Product!
+  removeClient(id: ID!): Boolean!
   removeInvoice(id: ID!): Boolean!
   removeProduct(id: ID!): Boolean!
+  updateClient(id: ID!, input: CreateClientInput!): Client!
   updateInvoice(id: ID!, input: UpdateInvoiceInput!): Invoice!
   updateProduct(id: ID!, input: CreateProductInput!): Product!
 }
@@ -118,6 +144,8 @@ type Product {
 }
 
 type Query {
+  client(id: ID!): Client!
+  clients: [Client!]!
   invoice(id: ID!): Invoice!
   invoices: [Invoice!]!
   payment(id: ID!): Payment!

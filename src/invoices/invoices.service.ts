@@ -6,6 +6,7 @@ import { CreateInvoiceDto } from './dto/create-invoice.dto';
 import { InvoiceItem } from './entities/invoice-item.entity';
 import { UpdateInvoiceDto } from './dto/update-invoice.dto';
 import { ProductsService } from '../products/products.service';
+import { Client } from '../clients/entities/client.entity';
 
 @Injectable()
 export class InvoicesService {
@@ -16,6 +17,8 @@ export class InvoicesService {
     private invoicesRepository: Repository<Invoice>,
     @InjectRepository(InvoiceItem)
     private invoiceItemsRepository: Repository<InvoiceItem>,
+    @InjectRepository(Client)
+    private clientsRepository: Repository<Client>,
     private productsService: ProductsService,
   ) {}
 
@@ -24,6 +27,7 @@ export class InvoicesService {
       .createQueryBuilder('invoice')
       .leftJoinAndSelect('invoice.items', 'items')
       .leftJoinAndSelect('items.product', 'product')
+      .leftJoinAndSelect('invoice.client', 'client')
       .getMany();
   }
 
@@ -32,6 +36,7 @@ export class InvoicesService {
       .createQueryBuilder('invoice')
       .leftJoinAndSelect('invoice.items', 'items')
       .leftJoinAndSelect('items.product', 'product')
+      .leftJoinAndSelect('invoice.client', 'client')
       .where('invoice.id = :id', { id })
       .getOne();
 
@@ -57,6 +62,15 @@ export class InvoicesService {
 
   async create(createInvoiceDto: CreateInvoiceDto): Promise<Invoice> {
     try {
+      // Validate client exists
+      const client = await this.clientsRepository.findOne({ 
+        where: { id: createInvoiceDto.clientId }
+      });
+      
+      if (!client) {
+        throw new NotFoundException(`Client with ID ${createInvoiceDto.clientId} not found`);
+      }
+
       const totalItemsValue = createInvoiceDto.items.reduce((sum, item) => sum + item.total, 0);
       if (Math.abs(totalItemsValue - createInvoiceDto.totalPayableAmount) > this.PRICE_COMPARISON_TOLERANCE) {
         throw new BadRequestException('Total value of items does not match total payable amount');
@@ -66,6 +80,7 @@ export class InvoicesService {
       invoice.description = createInvoiceDto.description;
       invoice.totalPayableAmount = createInvoiceDto.totalPayableAmount;
       invoice.dueDate = createInvoiceDto.dueDate;
+      invoice.client = client;
       
       // Save the invoice first
       const savedInvoice = await this.invoicesRepository.save(invoice);
@@ -100,7 +115,7 @@ export class InvoicesService {
       return this.findOne(savedInvoice.id);
     } catch (error) {
       if (error.status === 404) {
-        throw new BadRequestException(`Product not found: ${error.message}`);
+        throw new BadRequestException(`Entity not found: ${error.message}`);
       }
       throw error;
     }

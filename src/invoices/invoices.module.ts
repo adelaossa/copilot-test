@@ -9,13 +9,16 @@ import { PaymentsModule } from '../payments/payments.module';
 import { InvoicesSeeder } from './invoices.seeder';
 import { InvoicesResolver } from './invoices.resolver';
 import { AuthModule } from '../auth/auth.module';
+import { ClientsModule } from '../clients/clients.module';
+import { Client } from '../clients/entities/client.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Invoice, InvoiceItem]),
+    TypeOrmModule.forFeature([Invoice, InvoiceItem, Client]),
     ProductsModule,
     PaymentsModule,
-    AuthModule
+    AuthModule,
+    ClientsModule
   ],
   providers: [InvoicesService, InvoicesSeeder, InvoicesResolver],
   controllers: [InvoicesController],

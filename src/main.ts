@@ -3,6 +3,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
 import { setupSwagger } from './swagger.config';
 import { ProductsSeeder } from './products/products.seeder';
+import { ClientsSeeder } from './clients/clients.seeder';
 import { InvoicesSeeder } from './invoices/invoices.seeder';
 
 async function bootstrap() {
@@ -15,11 +16,15 @@ async function bootstrap() {
   setupSwagger(app);
 
   if (process.env.NODE_ENV === 'development') {
-    // Seed products first
+    // First seed products
     const productsSeeder = app.get(ProductsSeeder);
     await productsSeeder.seed();
 
-    // Then seed invoices
+    // Then seed clients
+    const clientsSeeder = app.get(ClientsSeeder);
+    await clientsSeeder.seed();
+
+    // Finally seed invoices
     const invoicesSeeder = app.get(InvoicesSeeder);
     await invoicesSeeder.seed();
   }

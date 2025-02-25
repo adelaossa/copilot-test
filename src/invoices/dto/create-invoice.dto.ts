@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { ArrayMinSize, IsArray, IsNotEmpty, IsNumber, IsDate, IsString } from 'class-validator';
 import { Transform } from 'class-transformer';
-import { InputType, Field, Float } from '@nestjs/graphql';
+import { InputType, Field, Float, Int } from '@nestjs/graphql';
 import { InvoiceItemDto } from './invoice-item.dto';
 
 @InputType('CreateInvoiceInput')
@@ -30,4 +30,10 @@ export class CreateInvoiceDto {
   @IsArray()
   @ArrayMinSize(1, { message: 'Invoice must contain at least 1 item' })
   items: InvoiceItemDto[];
+
+  @Field(() => Int)
+  @ApiProperty()
+  @IsNumber()
+  @IsNotEmpty()
+  clientId: number;
 }
