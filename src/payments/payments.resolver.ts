@@ -1,9 +1,8 @@
 import { Resolver, Query, Mutation, Args, ID } from '@nestjs/graphql';
-import { UseGuards } from '@nestjs/common';
 import { PaymentsService } from './payments.service';
 import { Payment } from './entities/payment.entity';
 import { CreatePaymentDto } from './dto/create-payment.dto';
-import { AuthGuard, ResourceGuard, RoleGuard, Roles, Unprotected } from 'nest-keycloak-connect';
+import { Roles, Unprotected } from 'nest-keycloak-connect';
 
 @Resolver(() => Payment)
 export class PaymentsResolver {
@@ -22,7 +21,6 @@ export class PaymentsResolver {
   }
 
   @Mutation(() => Payment)
-  @UseGuards(AuthGuard, ResourceGuard, RoleGuard)
   @Roles({ roles: ['admin'] })
   createPayment(@Args('input') createPaymentDto: CreatePaymentDto): Promise<Payment> {
     return this.paymentsService.createPayment(createPaymentDto);
