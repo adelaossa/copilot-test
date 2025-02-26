@@ -43,6 +43,15 @@ input CreateProductInput {
   currentPrice: Float!
   description: String
   name: String!
+  supplierId: Int
+}
+
+input CreateSupplierDto {
+  address: String!
+  contactPerson: String!
+  email: String!
+  name: String!
+  phone: String!
 }
 
 """
@@ -98,12 +107,15 @@ type Mutation {
   createInvoice(input: CreateInvoiceInput!): Invoice!
   createPayment(input: CreatePaymentInput!): Payment!
   createProduct(input: CreateProductInput!): Product!
+  createSupplier(createSupplierInput: CreateSupplierDto!): Supplier!
   removeClient(id: ID!): Boolean!
   removeInvoice(id: ID!): Boolean!
   removeProduct(id: ID!): Boolean!
+  removeSupplier(id: Int!): Boolean!
   updateClient(id: ID!, input: CreateClientInput!): Client!
   updateInvoice(id: ID!, input: UpdateInvoiceInput!): Invoice!
   updateProduct(id: ID!, input: CreateProductInput!): Product!
+  updateSupplier(id: Int!, updateSupplierInput: UpdateSupplierInput!): Supplier!
 }
 
 type Payment {
@@ -140,6 +152,8 @@ type Product {
   description: String
   id: ID!
   name: String!
+  supplier: Supplier
+  supplierId: Float
   updatedAt: DateTime!
 }
 
@@ -152,6 +166,21 @@ type Query {
   payments: [Payment!]!
   product(id: ID!): Product!
   products: [Product!]!
+  supplier(id: Int!): Supplier!
+  suppliers: [Supplier!]!
+}
+
+type Supplier {
+  address: String!
+  contactPerson: String!
+  createdAt: DateTime!
+  email: String!
+  id: Int!
+  isActive: Boolean!
+  name: String!
+  phone: String!
+  products: [Product!]!
+  updatedAt: DateTime!
 }
 
 input UpdateInvoiceInput {
@@ -159,4 +188,13 @@ input UpdateInvoiceInput {
   dueDate: DateTime
   items: [InvoiceItemInput!]
   totalPayableAmount: Float
+}
+
+input UpdateSupplierInput {
+  address: String
+  contactPerson: String
+  email: String
+  isActive: Boolean
+  name: String
+  phone: String
 }

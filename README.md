@@ -32,6 +32,60 @@
 $ npm install
 ```
 
+## Starting Keycloak and Databases
+
+The project uses Docker Compose to run Keycloak and PostgreSQL databases. Configuration values are stored in the `.env` file.
+
+### Configuration
+
+All service configurations are stored in the `.env` file at the project root. You can modify this file to change ports, usernames, passwords, etc.
+
+```bash
+# Start all services (Keycloak and both PostgreSQL instances)
+$ docker-compose up -d
+
+# To view logs
+$ docker-compose logs -f
+```
+
+### Services Configuration (defined in .env):
+
+1. **Application Database**:
+   - Container name: postgres
+   - Port: ${DB_PORT} (default: 5432)
+   - Username: ${DB_USER} (default: copuser)
+   - Password: ${DB_PASS} (default: coppass)
+   - Database: ${DB_NAME} (default: copdb)
+
+2. **Keycloak Database**:
+   - Container name: postgres_keycloak
+   - Port: ${KEYCLOAK_DB_PORT} (default: 5433)
+   - Username: ${KEYCLOAK_DB_USER} (default: keycloak)
+   - Password: ${KEYCLOAK_DB_PASSWORD} (default: keycloak)
+   - Database: ${KEYCLOAK_DB_NAME} (default: keycloak)
+
+3. **Keycloak**:
+   - Container name: keycloak
+   - Port: ${KEYCLOAK_PORT} (default: 8080)
+   - Admin Username: ${KEYCLOAK_ADMIN} (default: admin)
+   - Admin Password: ${KEYCLOAK_ADMIN_PASSWORD} (default: admin)
+   - URL: http://localhost:${KEYCLOAK_PORT}
+   - Admin Console: http://localhost:${KEYCLOAK_PORT}/admin
+   - Imported realm configuration from: realm-config.json
+
+### Managing Services:
+
+```bash
+# Stop services
+$ docker-compose stop
+
+# Start services again
+$ docker-compose start
+
+# Stop and remove containers
+$ docker-compose down
+```
+
 ## Compile and run the project
 
 ```bash

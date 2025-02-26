@@ -1,6 +1,6 @@
-import { IsString, IsNumber, IsOptional, Min } from 'class-validator';
+import { IsString, IsNumber, IsOptional, Min, IsInt } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { InputType, Field, Float } from '@nestjs/graphql';
+import { InputType, Field, Float, Int } from '@nestjs/graphql';
 
 @InputType('CreateProductInput')
 export class CreateProductDto {
@@ -20,4 +20,10 @@ export class CreateProductDto {
   @IsString()
   @IsOptional()
   description?: string;
+  
+  @Field(() => Int, { nullable: true })
+  @ApiPropertyOptional({ description: 'Supplier ID' })
+  @IsInt()
+  @IsOptional()
+  supplierId?: number;
 }
