@@ -3,10 +3,11 @@ import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { ProductsService } from './products.service';
 import { Product } from './entities/product.entity';
 import { CreateProductDto } from './dto/create-product.dto';
-import { Roles, Unprotected } from 'nest-keycloak-connect';
+import { Resource, Roles, Unprotected } from 'nest-keycloak-connect';
 
 @ApiTags('products')
 @Controller('products')
+@Resource('products')
 export class ProductsController {
   private readonly logger = new Logger(ProductsController.name);
   

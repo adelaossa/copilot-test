@@ -1,0 +1,37 @@
+{
+  "errors": {
+    "notFound": "Resource not found",
+    "unauthorized": "Unauthorized access",
+    "badRequest": "Invalid request",
+    "paymentExceeds": "Payment amount exceeds total remaining amount"
+  },
+  "invoice": {
+    "status": {
+      "pending": "Pending",
+      "paid": "Paid",
+      "overdue": "Overdue"
+    },
+    "errors": {
+      "hasPayments": "Cannot modify an invoice that has received payments",
+      "itemsMismatch": "Total value of items does not match total payable amount",
+      "priceChanged": "Unit price does not match product's current price"
+    }
+  },
+  "payment": {
+    "method": {
+      "creditCard": "Credit Card",
+      "bankTransfer": "Bank Transfer",
+      "cash": "Cash"
+    },
+    "status": {
+      "pending": "Pending",
+      "completed": "Completed",
+      "failed": "Failed"
+    },
+    "distribution": {
+      "proportional": "Proportional",
+      "oldestFirst": "Oldest First",
+      "inOrder": "In Order"
+    }
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "errors": {
+    "notFound": "Recurso no encontrado",
+    "unauthorized": "Acceso no autorizado",
+    "badRequest": "Solicitud inválida",
+    "paymentExceeds": "El monto del pago excede el monto total restante"
+  },
+  "invoice": {
+    "status": {
+      "pending": "Pendiente",
+      "paid": "Pagada",
+      "overdue": "Vencida"
+    },
+    "errors": {
+      "hasPayments": "No se puede modificar una factura que ha recibido pagos",
+      "itemsMismatch": "El valor total de los items no coincide con el monto total a pagar",
+      "priceChanged": "El precio unitario no coincide con el precio actual del producto"
+    }
+  },
+  "payment": {
+    "method": {
+      "creditCard": "Tarjeta de Crédito",
+      "bankTransfer": "Transferencia Bancaria",
+      "cash": "Efectivo"
+    },
+    "status": {
+      "pending": "Pendiente",
+      "completed": "Completado",
+      "failed": "Fallido"
+    },
+    "distribution": {
+      "proportional": "Proporcional",
+      "oldestFirst": "Más Antiguo Primero",
+      "inOrder": "En Orden"
+    }
+  }
+}

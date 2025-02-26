@@ -11,6 +11,7 @@ import { InvoicesResolver } from './invoices.resolver';
 import { AuthModule } from '../auth/auth.module';
 import { ClientsModule } from '../clients/clients.module';
 import { Client } from '../clients/entities/client.entity';
+import { I18nModule } from '../i18n/i18n.module';
 
 @Module({
   imports: [
@@ -18,7 +19,8 @@ import { Client } from '../clients/entities/client.entity';
     ProductsModule,
     PaymentsModule,
     AuthModule,
-    ClientsModule
+    ClientsModule,
+    I18nModule
   ],
   providers: [InvoicesService, InvoicesSeeder, InvoicesResolver],
   controllers: [InvoicesController],

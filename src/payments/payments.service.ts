@@ -6,6 +6,7 @@ import { Invoice } from '../invoices/entities/invoice.entity';
 import { InvoiceItem } from '../invoices/entities/invoice-item.entity';
 import { CreatePaymentDto } from './dto/create-payment.dto';
 import { PaymentDistributionType, ItemDistributionType, InvoicePaymentApplication, InvoiceItemPaymentApplication } from './types/payment-distribution.types';
+import { TranslationService } from '../i18n/translation.service';
 
 @Injectable()
 export class PaymentsService {
@@ -14,7 +15,8 @@ export class PaymentsService {
     private paymentsRepository: Repository<Payment>,
     @InjectRepository(Invoice)
     private invoicesRepository: Repository<Invoice>,
-    private dataSource: DataSource
+    private dataSource: DataSource,
+    private translationService: TranslationService
   ) {}
 
   private distributeItemsProportionally(amount: number, items: InvoiceItem[]): InvoiceItemPaymentApplication[] {
@@ -186,7 +188,8 @@ export class PaymentsService {
             .getOne();
 
           if (!invoice) {
-            throw new NotFoundException(`Invoice with ID ${id} not found`);
+            const errorMessage = await this.translationService.translateAsync('errors.notFound');
+            throw new NotFoundException(errorMessage);
           }
 
           console.log(`Found invoice ${id}:`, {
@@ -204,7 +207,8 @@ export class PaymentsService {
 
       // Verify payment amount
       if (createPaymentDto.amount > totalRemaining) {
-        throw new BadRequestException('Payment amount exceeds total remaining amount');
+        const errorMessage = await this.translationService.translateAsync('errors.paymentExceeds');
+        throw new BadRequestException(errorMessage);
       }
 
       // Get initial distribution across invoices

@@ -7,6 +7,7 @@ import { InvoiceItem } from './entities/invoice-item.entity';
 import { UpdateInvoiceDto } from './dto/update-invoice.dto';
 import { ProductsService } from '../products/products.service';
 import { Client } from '../clients/entities/client.entity';
+import { TranslationService } from '../i18n/translation.service';
 
 @Injectable()
 export class InvoicesService {
@@ -20,6 +21,7 @@ export class InvoicesService {
     @InjectRepository(Client)
     private clientsRepository: Repository<Client>,
     private productsService: ProductsService,
+    private translationService: TranslationService
   ) {}
 
   findAll(): Promise<Invoice[]> {
@@ -31,7 +33,7 @@ export class InvoicesService {
       .getMany();
   }
 
-  async findOne(id: number): Promise<Invoice> {
+  async findOne(id: number, lang: string = 'en'): Promise<Invoice> {
     const invoice = await this.invoicesRepository
       .createQueryBuilder('invoice')
       .leftJoinAndSelect('invoice.items', 'items')
@@ -41,26 +43,29 @@ export class InvoicesService {
       .getOne();
 
     if (!invoice) {
-      throw new NotFoundException(`Invoice with id ${id} not found`);
+      const errorMessage = await this.translationService.translateAsync('errors.notFound', lang);
+      throw new NotFoundException(errorMessage);
     }
     return invoice;
   }
 
-  async remove(id: number): Promise<void> {
-    const invoice = await this.findOne(id);
+  async remove(id: number, lang: string = 'en'): Promise<void> {
+    const invoice = await this.findOne(id, lang);
     if (!invoice) {
-      throw new Error(`Invoice with id ${id} not found`);
+      const errorMessage = await this.translationService.translateAsync('errors.notFound', lang);
+      throw new NotFoundException(errorMessage);
     }
 
     if (invoice.hasPayments()) {
-      throw new BadRequestException('Cannot delete an invoice that has received payments');
+      const errorMessage = await this.translationService.translateAsync('invoice.errors.hasPayments', lang);
+      throw new BadRequestException(errorMessage);
     }
 
-    await this.invoicesRepository.manager.delete(InvoiceItem, { invoice: { id } });
+    await this.invoiceItemsRepository.delete({ invoice: { id } });
     await this.invoicesRepository.delete(id);
   }
 
-  async create(createInvoiceDto: CreateInvoiceDto): Promise<Invoice> {
+  async create(createInvoiceDto: CreateInvoiceDto, lang: string = 'en'): Promise<Invoice> {
     try {
       // Validate client exists
       const client = await this.clientsRepository.findOne({ 
@@ -68,12 +73,14 @@ export class InvoicesService {
       });
       
       if (!client) {
-        throw new NotFoundException(`Client with ID ${createInvoiceDto.clientId} not found`);
+        const errorMessage = await this.translationService.translateAsync('errors.notFound', lang);
+        throw new NotFoundException(errorMessage);
       }
 
       const totalItemsValue = createInvoiceDto.items.reduce((sum, item) => sum + item.total, 0);
       if (Math.abs(totalItemsValue - createInvoiceDto.totalPayableAmount) > this.PRICE_COMPARISON_TOLERANCE) {
-        throw new BadRequestException('Total value of items does not match total payable amount');
+        const errorMessage = await this.translationService.translateAsync('invoice.errors.itemsMismatch', lang);
+        throw new BadRequestException(errorMessage);
       }
 
       const invoice = new Invoice();
@@ -94,7 +101,8 @@ export class InvoicesService {
           const productPrice = Number(product.currentPrice);
           const itemPrice = Number(itemDto.unitPrice);
           if (Math.abs(itemPrice - productPrice) > this.PRICE_COMPARISON_TOLERANCE) {
-            throw new BadRequestException(`Unit price ${itemPrice} does not match product's current price ${productPrice}`);
+            const errorMessage = await this.translationService.translateAsync('invoice.errors.priceChanged', lang);
+            throw new BadRequestException(errorMessage);
           }
 
           const item = new InvoiceItem();
@@ -112,20 +120,22 @@ export class InvoicesService {
         }
       }
 
-      return this.findOne(savedInvoice.id);
+      return this.findOne(savedInvoice.id, lang);
     } catch (error) {
       if (error.status === 404) {
-        throw new BadRequestException(`Entity not found: ${error.message}`);
+        const errorMessage = await this.translationService.translateAsync('errors.notFound', lang);
+        throw new BadRequestException(errorMessage);
       }
       throw error;
     }
   }
 
-  async update(id: number, updateInvoiceDto: UpdateInvoiceDto): Promise<Invoice> {
-    const invoice = await this.findOne(id);
+  async update(id: number, updateInvoiceDto: UpdateInvoiceDto, lang: string = 'en'): Promise<Invoice> {
+    const invoice = await this.findOne(id, lang);
 
     if (invoice.hasPayments()) {
-      throw new BadRequestException('Cannot modify an invoice that has received payments');
+      const errorMessage = await this.translationService.translateAsync('invoice.errors.hasPayments', lang);
+      throw new BadRequestException(errorMessage);
     }
     
     if (updateInvoiceDto.description) {

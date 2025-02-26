@@ -12,6 +12,7 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
 import { join } from 'path';
+import { I18nModule } from './i18n/i18n.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { join } from 'path';
       includeStacktraceInErrorResponses: process.env.NODE_ENV !== 'production',
       context: ({ req }) => ({ req })
     }),
+    I18nModule,
     AuthModule,
     InvoicesModule,
     PaymentsModule,
